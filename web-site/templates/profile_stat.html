@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row justify-content-center mt-6" style="padding: 15px;">
+    <div class="col-md-6 col-lg-5"> <div class="card shadow-lg border-0 rounded-3"> <div class="card-body text-center p-4"> <div class="mb-4 d-flex justify-content-center">
+                    {% if user.photo %}
+                        <img src="{{ url_for('static', filename='img/' + user.photo) }}"
+                             alt="Аватар игрока"
+                             class="rounded-circle shadow object-fit-cover border border-4 border-black"
+                             style="width: 150px; height: 150px; min-width: 150px; min-height: 150px;">
+                    {% else %}
+                        <div class="rounded-circle bg-light d-flex align-items-center justify-content-center shadow border border-4 border-white text-secondary"
+                             style="width: 150px; height: 150px;">
+                            <span class="fs-1 text-uppercase">{{ user.username[0] }}</span>
+                        </div>
+                    {% endif %}
+                </div>
+                <h3 class="card-title mb-1 text-primary fw-bold">{{ user.username }}</h3>
+                <p class="text-muted mb-4">Личный статистика игрока</p>
+                <hr class="text-muted my-4">
+                <div class="text-start px-3">
+                    <div class="row mb-3 align-items-center">
+                        <div class="col-sm-4 text-muted small text-uppercase fw-bold">Общее количество убийств:</div>
+                        <div class="col-sm-8 fw-semibold text-light">{{ user.kills }}</div>
+                    </div>
+                </div>
+                <div class="text-start px-3">
+                    <div class="row mb-3 align-items-center">
+                        <div class="col-sm-4 text-muted small text-uppercase fw-bold">Смерти:</div>
+                        <div class="col-sm-8 fw-semibold text-light">{{ user.deaths }}</div>
+                    </div>
+                </div>
+                <div class="text-start px-3">
+                    <div class="row mb-3 align-items-center">
+                        <div class="col-sm-4 text-muted small text-uppercase fw-bold">Убито боссов:</div>
+                        <div class="col-sm-8 fw-semibold text-light">{{ user.bosses_defeated }}</div>
+                    </div>
+                </div>
+                <div class="text-start px-3">
+                    <div class="row mb-3 align-items-center">
+                        <div class="col-sm-4 text-muted small text-uppercase fw-bold">Прожито волн:</div>
+                        <div class="col-sm-8 fw-semibold text-light">{{ user.total_wave }}</div>
+                    </div>
+                </div>
+                <div class="text-start px-3">
+                    <div class="row mb-3 align-items-center">
+                        <div class="col-sm-4 text-muted small text-uppercase fw-bold">Убито обычных врагов:</div>
+                        <div class="col-sm-8 fw-semibold text-light">{{ user.enemies_killed }}</div>
+                    </div>
+                </div>
+                <div class="text-start px-3">
+                    <div class="row mb-3 align-items-center">
+                        <div class="col-sm-4 text-muted small text-uppercase fw-bold">Убито летучих мышей:</div>
+                        <div class="col-sm-8 fw-semibold text-light">{{ user.bats_killed }}</div>
+                    </div>
+                </div>
+                <div class="text-start px-3">
+                    <div class="row mb-3 align-items-center">
+                        <div class="col-sm-4 text-muted small text-uppercase fw-bold">Кинуто мечей:</div>
+                        <div class="col-sm-8 fw-semibold text-light">{{ user.swords_thrown }}</div>
+                    </div>
+                </div>
+                <div class="text-start px-3">
+                    <div class="row mb-3 align-items-center">
+                        <div class="col-sm-4 text-muted small text-uppercase fw-bold">Мечи не попали во врага:</div>
+                        <div class="col-sm-8 fw-semibold text-light">{{ user.swords_missed }}</div>
+                    </div>
+                </div>
+                <div class="text-start px-3">
+                    <div class="row mb-3 align-items-center">
+                        <div class="col-sm-4 text-muted small text-uppercase fw-bold">Мечи попали во врага:</div>
+                        <div class="col-sm-8 fw-semibold text-light">{{ user.swords_hitted }}</div>
+                    </div>
+                </div>
+                <div class="text-start px-3">
+                    <div class="row mb-3 align-items-center">
+                        <div class="col-sm-4 text-muted small text-uppercase fw-bold">Баланс:</div>
+                        <div class="col-sm-8 fw-semibold text-light">{{ user.balance }} ⭐ </div>
+                    </div>
+                </div>
+            </div>
+        <div class="card-footer bg-darkpurple border-0 text-center p-3">
+        <a href="/profile" class="btn btn-outline-info btn-lg" style="border-radius: 12px;">Вернуться к профилю</a>
+        </div>
+            <div class="card-footer bg-darkpurple border-0 text-center p-3">
+                <a href="/" class="btn btn-outline-info btn-lg" style="border-radius: 12px;">На главную страницу</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <h2 class="mb-4">Редактирование профиля</h2>
+            {% if success %}
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    {{ success }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            {% endif %}
+            {% if error %}
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    {{ error }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            {% endif %}
+            <form method="POST" enctype="multipart/form-data">
+                <div class="mb-3">
+                    <label for="photo" class="form-label">Фото профиля</label>
+                    {% if user.photo %}
+                        <div class="mb-2">
+                            <img src="/static/img/{{ user.photo }}" alt="Фото" width="100" class="rounded">
+                        </div>
+                    {% endif %}
+                    <input type="file" class="form-control" id="photo" name="photo" accept="image/*">
+                </div>
+                <div class="mb-3">
+                    <label for="username" class="form-label">Имя</label>
+                    <input type="text" class="form-control" id="username" name="username" value="{{ user.username or '' }}">
+                </div>
+                <div class="mb-3">
+                    <label for="name" class="form-label">Имя</label>
+                    <input type="text" class="form-control" id="name" name="name" value="{{ user.name or '' }}">
+                </div>
+                <div class="mb-3">
+                    <label for="surname" class="form-label">Фамилия</label>
+                    <input type="text" class="form-control" id="surname" name="surname" value="{{ user.surname or '' }}">
+                </div>
+                <hr>
+                <h5>Смена пароля (опционально)</h5>
+                <div class="mb-3">
+                    <label for="new_password" class="form-label">Новый пароль</label>
+                    <input type="password" class="form-control" id="new_password" name="new_password" placeholder="Оставьте пусто, если не хотите менять">
+                    <small class="text-muted">Минимум 6 символов</small>
+                </div>
+                <div class="mb-3">
+                    <button type="submit" class="btn btn-primary btn-lg me-2">💾 Сохранить</button>
+                    <a href="/profile" class="btn btn-secondary btn-lg">← Назад</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

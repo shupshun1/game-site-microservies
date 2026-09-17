@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row justify-content-center mt-6" style="padding: 15px;">
+    <div class="col-md-6 col-lg-5"> <div class="card shadow-lg border-0 rounded-3"> <div class="card-body text-center p-4"> <div class="mb-4 d-flex justify-content-center">
+                    {% if user.photo %}
+                        <img src="{{ url_for('static', filename='img/' + user.photo) }}"
+                             alt="Аватар игрока"
+                             class="rounded-circle shadow object-fit-cover border border-4 border-black"
+                             style="width: 150px; height: 150px; min-width: 150px; min-height: 150px;">
+                    {% else %}
+                        <div class="rounded-circle bg-light d-flex align-items-center justify-content-center shadow border border-4 border-white text-secondary"
+                             style="width: 150px; height: 150px;">
+                            <span class="fs-1 text-uppercase">{{ user.username[0] }}</span>
+                        </div>
+                    {% endif %}
+                </div>
+                <h3 class="card-title mb-1 text-primary fw-bold">{{ user.username }}</h3>
+                <p class="text-muted mb-4">Личный кабинет игрока</p>
+                <hr class="text-muted my-4">
+                <div class="text-start px-3">
+                    <div class="row mb-3 align-items-center">
+                        <div class="col-sm-4 text-muted small text-uppercase fw-bold">Имя:</div>
+                        <div class="col-sm-8 fw-semibold text-light">{{ user.name }}</div>
+                    </div>
+                </div>
+                <div class="text-start px-3">
+                    <div class="row mb-3 align-items-center">
+                        <div class="col-sm-4 text-muted small text-uppercase fw-bold">Фамилия:</div>
+                        <div class="col-sm-8 fw-semibold text-light">{{ user.surname }}</div>
+                    </div>
+                </div>
+            </div>
+        <div class="card-footer bg-darkpurple border-0 text-center p-3">
+        <a href="/edit-profile" class="btn btn-outline-info btn-lg" style="border-radius: 12px;">Изменить данные</a>
+        </div>
+        <div class="card-footer bg-darkpurple border-0 text-center p-3">
+        <a href="/logout" class="btn btn-outline-info btn-lg" style="border-radius: 12px;">Выход из профиля</a>
+        </div>
+            <div class="card-footer bg-darkpurple border-0 text-center p-3">
+                <a href="/" class="btn btn-outline-info btn-lg" style="border-radius: 12px;">На главную страницу</a>
+            </div>
+        <div class="card-footer bg-darkpurple border-0 text-center p-3">
+                <a href="/profile/stats" class="btn btn-outline-info btn-lg" style="border-radius: 12px;">Статистика</a>
+            </div>
+        </div>
+        <div class="text-center text-muted small mt-3">
+            Игрок зарегистрирован: {{user.modified_date.strftime('%d.%m.%Y')}}
+        </div>
+        <div class="text-center text-muted small mt-3">
+            Страна регистрации: {{user.country}}
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,211 @@
+{% extends "base.html" %}
+{% block title %}Об игре — Battle Arena{% endblock %}
+{% block content %}
+<style>
+    .section-title {
+        color: #00d4ff;
+        font-size: 24px;
+        margin: 40px 0 20px 0;
+        font-weight: bold;
+    }
+
+    .game-card {
+        background: linear-gradient(135deg, #2a2a3e 0%, #3a3a5e 100%);
+        border-radius: 8px;
+        padding: 24px;
+        margin-bottom: 16px;
+        border-left: 4px solid #00d4ff;
+        transition: all 0.3s;
+    }
+
+    .game-card:hover {
+        border-left-color: #ffd700;
+        transform: translateX(5px);
+    }
+
+    .game-card-title {
+        font-size: 18px;
+        font-weight: bold;
+        color: #fff;
+        margin-bottom: 8px;
+    }
+
+    .game-card-text {
+        color: #aaa;
+        font-size: 15px;
+        line-height: 1.6;
+        margin: 0;
+    }
+
+    .enemy-tag {
+        font-size: 11px;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        padding: 3px 10px;
+        border-radius: 20px;
+        font-weight: 600;
+        white-space: nowrap;
+    }
+
+    .tag-normal { background: rgba(0,212,255,0.15);  color: #00d4ff; border: 1px solid rgba(0,212,255,0.3); }
+    .tag-fast   { background: rgba(168,85,247,0.15); color: #c084fc; border: 1px solid rgba(168,85,247,0.3); }
+    .tag-boss   { background: rgba(239,68,68,0.15);  color: #f87171; border: 1px solid rgba(239,68,68,0.3); }
+
+    .controls-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 15px;
+    }
+
+    .controls-table th {
+        color: #00d4ff;
+        font-size: 12px;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        padding: 0 0 12px 0;
+        border-bottom: 1px solid rgba(0,212,255,0.25);
+        font-weight: 400;
+    }
+
+    .controls-table td {
+        padding: 13px 0;
+        border-bottom: 1px solid rgba(255,255,255,0.06);
+        color: #aaa;
+        vertical-align: middle;
+    }
+
+    .controls-table tr:last-child td { border-bottom: none; }
+    .controls-table td:last-child, .controls-table th:last-child { text-align: right; }
+
+    .key {
+        display: inline-block;
+        background: rgba(255,255,255,0.07);
+        border: 1px solid rgba(255,255,255,0.18);
+        border-bottom: 2px solid rgba(255,255,255,0.06);
+        border-radius: 5px;
+        padding: 2px 9px;
+        font-size: 13px;
+        color: #e0e6f0;
+        white-space: nowrap;
+    }
+
+    .key + .key { margin-left: 3px; }
+
+    .page-divider {
+        border: none;
+        border-top: 1px solid rgba(0,212,255,0.15);
+        margin: 0 0 24px;
+    }
+</style>
+
+<div class="container py-5" style="max-width: 860px;">
+    <div class="text-center mb-5">
+        <h1 class="fw-bold" style="color: #fff; font-size: clamp(32px, 5vw, 52px);">
+            ⚔️ Battle <span style="color: #00d4ff;">Arena</span>
+        </h1>
+        <p class="mt-2" style="color: #aaa; font-size: 16px;">Подземелье. Волны. Выживи как можно дольше.</p>
+    </div>
+    <h2 class="section-title">Об игре</h2>
+    <hr class="page-divider">
+    <div class="game-card">
+        <div class="game-card-title">Что происходит</div>
+        <p class="game-card-text">
+            Ты заперт на одной арене в подземелье. Волна за волной тебя атакуют призраки и чудовища —
+            их становится всё больше с каждым раундом. Единственное оружие — мечи, которые ты бросаешь
+            в четырёх направлениях. Каждая десятая волна приносит Босса. Цель одна: продержаться как можно дольше.
+        </p>
+    </div>
+    <h2 class="section-title">Механики</h2>
+    <hr class="page-divider">
+    <div class="row g-3">
+        <div class="col-md-6">
+            <div class="game-card h-100">
+                <div class="game-card-title">⚔️ Броски мечей</div>
+                <p class="game-card-text">Метай мечи в четырёх направлениях стрелками. Меч летит до стены — не промахнись.</p>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="game-card h-100">
+                <div class="game-card-title">🌊 Бесконечные волны</div>
+                <p class="game-card-text">С каждой волной врагов больше и они быстрее. Между волнами — три секунды передышки.</p>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="game-card h-100">
+                <div class="game-card-title">💨 Рывок</div>
+                <p class="game-card-text">Зажми Shift во время движения — скорость вдвое выше на пять секунд. Потом нужна перезарядка.</p>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="game-card h-100">
+                <div class="game-card-title">💀 Три жизни</div>
+                <p class="game-card-text">У тебя три сердца. Каждый контакт с врагом — минус одно. После удара — две секунды неуязвимости.</p>
+            </div>
+        </div>
+    </div>
+    <h2 class="section-title">Управление</h2>
+    <hr class="page-divider">
+    <div class="game-card">
+        <table class="controls-table">
+            <thead>
+                <tr>
+                    <th>Действие</th>
+                    <th>Клавиша</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td style="color: #fff;">Движение</td>
+                    <td><span class="key">W</span><span class="key">A</span><span class="key">S</span><span class="key">D</span></td>
+                </tr>
+                <tr>
+                    <td style="color: #fff;">Бросок вверх / вниз / влево / вправо</td>
+                    <td><span class="key">↑</span><span class="key">↓</span><span class="key">←</span><span class="key">→</span></td>
+                </tr>
+                <tr>
+                    <td style="color: #fff;">Рывок (ускорение)</td>
+                    <td><span class="key">Shift</span> + <span class="key">W/A/S/D</span></td>
+                </tr>
+                <tr>
+                    <td style="color: #fff;">Пауза</td>
+                    <td><span class="key">Esc</span></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <h2 class="section-title">Противники</h2>
+    <hr class="page-divider">
+    <div class="game-card d-flex align-items-center gap-3 justify-content-between flex-wrap">
+        <div class="d-flex align-items-center gap-3">
+            <span style="font-size: 28px; flex-shrink: 0;">👻</span>
+            <div>
+                <div class="game-card-title mb-1">Призрак, колдун и циклоп</div>
+                <p class="game-card-text mb-0">Патрулируют арену, атакуют при сближении. Нужно два удара мечом.</p>
+            </div>
+        </div>
+        <span class="enemy-tag tag-normal">Обычный</span>
+    </div>
+    <div class="game-card d-flex align-items-center gap-3 justify-content-between flex-wrap">
+        <div class="d-flex align-items-center gap-3">
+            <span style="font-size: 28px; flex-shrink: 0;">🦇</span>
+            <div>
+                <div class="game-card-title mb-1">Летучая мышь</div>
+                <p class="game-card-text mb-0">Летит сквозь стены, быстрее призраков. Гибнет с одного удара.</p>
+            </div>
+        </div>
+        <span class="enemy-tag tag-fast">Быстрый</span>
+    </div>
+
+    <div class="game-card d-flex align-items-center gap-3 justify-content-between flex-wrap">
+        <div class="d-flex align-items-center gap-3">
+            <span style="font-size: 28px; flex-shrink: 0;">👁️</span>
+            <div>
+                <div class="game-card-title mb-1">Большой призрак — Босс</div>
+                <p class="game-card-text mb-0">Каждые 10 волн. Стреляет снарядами по кругу, при низком HP таранит. Требует 20 попаданий.</p>
+            </div>
+        </div>
+        <span class="enemy-tag tag-boss">Босс</span>
+    </div>
+
+</div>
+{% endblock %}
