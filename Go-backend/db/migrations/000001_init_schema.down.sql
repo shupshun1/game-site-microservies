@@ -1,0 +1,3 @@
+DROP TABLE IF EXISTS users_skins;
+DROP TABLE IF EXISTS users_stats;
+DROP TABLE IF EXISTS users;
