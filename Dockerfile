@@ -1,12 +1,12 @@
-FROM golang:1.27.1-alpine:3.24 AS builder
+FROM golang:1.27.1-alpine AS builder
 WORKDIR /app
-COPY go.mod go.sum ./
+COPY Go-backend/cmd/app/go.mod Go-backend/cmd/app/go.sum ./
 RUN go mod download
-COPY . .
-RUN CGO_ENABLED=0 GOOS=linux go build -o main ./cmd
+COPY Go-backend/cmd/app/. .
+RUN CGO_ENABLED=0 GOOS=linux go build -o main .
 
 FROM alpine:latest
 COPY --from=builder /app/main .
-COPY --from=builder /app/db/migrations db/migartions
+COPY Go-backend/db/migrations ./db/migrations
 EXPOSE 8080
 ENTRYPOINT [ "./main" ]
