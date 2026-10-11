@@ -35,7 +35,7 @@ func main() {
 		slog.Error("Could not connect to database")
 		os.Exit(1)
 	}
-	migr, err := migrate.New("file:///db/migrations", dsn)
+	migr, err := migrate.New("file://db/migrations", dsn)
 	if err != nil {
 		slog.Error("Failed to create migrate instance")
 		os.Exit(1)
