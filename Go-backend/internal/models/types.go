@@ -2,7 +2,15 @@ package models
 
 import (
 	"time"
+
+	"github.com/golang-jwt/jwt/v5"
 )
+
+type Claims struct {
+	UserId   int    `json:"user_id"`
+	Username string `json:"username"`
+	jwt.RegisteredClaims
+}
 
 // DB models
 
@@ -34,7 +42,35 @@ type UserSkins struct {
 	ActiveSkin string `json:"active_skin"`
 }
 
+type UserWithStats struct {
+	Username       string `json:"username"`
+	Kills          int    `json:"kills"`
+	Deaths         int    `json:"deaths"`
+	BossesDefeated int    `json:"bosses_defeated"`
+	SwordsHitted   int    `json:"swords_hitted"`
+	SwordsThrown   int    `json:"swords_thrown"`
+	SwordsMissed   int    `json:"swords_missed"`
+	EnemiesKilled  int    `json:"enemies_killed"`
+	TotalWave      int    `json:"total_wave"`
+	Balance        int    `json:"balance"`
+	ActiveSkin     string `json:"active_skin"`
+	OwnedSkins     int    `json:"owned_skins"`
+}
+
 // Request and Response
+
+type UpdateStatsRequest struct {
+	Username       string `json:"username"`
+	Kills          int    `json:"kills"`
+	Deaths         int    `json:"deaths"`
+	BossesDefeated int    `json:"bosses_defeated"`
+	SwordsHitted   int    `json:"swords_hitted"`
+	SwordsThrown   int    `json:"swords_thrown"`
+	SwordsMissed   int    `json:"swords_missed"`
+	TotalWave      int    `json:"total_wave"`
+	EnemiesKilled  int    `json:"enemies_killed"`
+	Balance        int    `json:"balance"`
+}
 
 type RegisterRequest struct {
 	Username string `json:"username"`
