@@ -15,10 +15,11 @@ type Claims struct {
 // DB models
 
 type User struct {
-	ID        int       `json:"id"`
-	Username  string    `json:"username"`
-	PhotoUrl  string    `json:"photo_url"`
-	CreatedAt time.Time `json:"created_at"`
+	ID           int       `json:"id"`
+	Username     string    `json:"username"`
+	PasswordHash string    `json:"-"`
+	PhotoUrl     string    `json:"photo_url"`
+	CreatedAt    time.Time `json:"created_at"`
 }
 
 type UserStats struct {

@@ -18,8 +18,8 @@ func (s *Storage) CreateUser(ctx context.Context, username, passwordHash, photo_
 	var user models.User
 
 	errQ := tx.QueryRowContext(ctx, `INSERT INTO users (username, password_hash, photo_url) 
-	VALUES ($1, $2, $3) 
-	RETURNING id, username, photo_url, created_at`, username, passwordHash, photo_url).Scan(&user.ID, &user.Username, &user.PhotoUrl, &user.CreatedAt)
+	VALUES ($1, $2) 
+	RETURNING id, username, photo_url, created_at`, username, passwordHash).Scan(&user.ID, &user.Username, &user.PhotoUrl, &user.CreatedAt)
 	if errQ != nil {
 		slog.Error("Could not create a new user", "err", err)
 		return nil, errQ
@@ -39,6 +39,20 @@ func (s *Storage) CreateUser(ctx context.Context, username, passwordHash, photo_
 
 	if err = tx.Commit(); err != nil {
 		slog.Error("Could not commit transaction", "err", err)
+		return nil, err
+	}
+
+	return &user, nil
+}
+
+func (s *Storage) GetUserByUsername(ctx context.Context, username string) (*models.User, error) {
+	var user models.User
+
+	err := s.db.QueryRowContext(ctx, `SELECT id, username, password_hash, photo_url, created_at
+	FROM users
+	WHERE username = $1`, username).Scan(&user.ID, &user.Username, &user.PasswordHash, &user.PhotoUrl, &user.CreatedAt)
+	if err != nil {
+		slog.Error("Could not take user from users", "err", err)
 		return nil, err
 	}
 
