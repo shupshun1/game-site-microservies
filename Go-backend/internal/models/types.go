@@ -61,16 +61,15 @@ type UserWithStats struct {
 // Request and Response
 
 type UpdateStatsRequest struct {
-	Username       string `json:"username"`
-	Kills          int    `json:"kills"`
-	Deaths         int    `json:"deaths"`
-	BossesDefeated int    `json:"bosses_defeated"`
-	SwordsHitted   int    `json:"swords_hitted"`
-	SwordsThrown   int    `json:"swords_thrown"`
-	SwordsMissed   int    `json:"swords_missed"`
-	TotalWave      int    `json:"total_wave"`
-	EnemiesKilled  int    `json:"enemies_killed"`
-	Balance        int    `json:"balance"`
+	Kills          int `json:"kills"`
+	Deaths         int `json:"deaths"`
+	BossesDefeated int `json:"bosses_defeated"`
+	SwordsHitted   int `json:"swords_hitted"`
+	SwordsThrown   int `json:"swords_thrown"`
+	SwordsMissed   int `json:"swords_missed"`
+	TotalWave      int `json:"total_wave"`
+	EnemiesKilled  int `json:"enemies_killed"`
+	Balance        int `json:"balance"`
 }
 
 type RegisterRequest struct {
