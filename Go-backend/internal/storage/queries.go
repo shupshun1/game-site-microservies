@@ -7,7 +7,7 @@ import (
 	"log/slog"
 )
 
-func (s *Storage) CreateUser(ctx context.Context, username, passwordHash, photo_url string) (*models.User, error) {
+func (s *Storage) CreateUser(ctx context.Context, username, passwordHash string) (*models.User, error) {
 	// Start transaction
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
@@ -192,4 +192,63 @@ func (s *Storage) GetLeaderboardByBalance(ctx context.Context) ([]models.UserWit
 	}
 
 	return leaderboard, nil
+}
+
+func (s *Storage) BuySkin(ctx context.Context, userID, skinID int) error {
+	tx, err := s.db.BeginTx(ctx, nil)
+	if err != nil {
+		slog.Error("Could not create a transaction", "err", err)
+		return err
+	}
+	defer tx.Rollback()
+
+	const skinPrice = 10000
+
+	var balance int
+	var ownedSkins int
+
+	err = tx.QueryRowContext(ctx,
+		`SELECT st.balance, sk.owned_skins FROM
+		users_stats st JOIN users_skins sk ON st.user_id = sk.user_id
+		WHERE user_id = $1
+		FOR UPDATE`, userID).Scan(&balance, &ownedSkins)
+	if err != nil {
+		slog.Error("Could not find a user")
+		return err
+	}
+
+	if ownedSkins >= 2 {
+		return fmt.Errorf("Skin is already owned")
+	}
+
+	if balance < skinPrice {
+		return fmt.Errorf("Not enough balance")
+	}
+
+	_, err = tx.ExecContext(ctx, `
+	UPDATE users_stats SET balance = balance - $1
+	WHERE user_id = $2
+	`, skinPrice, userID)
+
+	if err != nil {
+		slog.Error("Could not update balance", "err", err)
+		return err
+	}
+
+	_, err = tx.ExecContext(ctx, `
+	UPDATE users_skins SET owned_skins = 2
+	WHERE user_id = $1
+	`, userID)
+
+	if err != nil {
+		slog.Error("Could not update owned_skins", "err", err)
+		return err
+	}
+
+	if err = tx.Commit(); err != nil {
+		slog.Error("Could not commit the transaction", "err", err)
+		return err
+	}
+
+	return nil
 }

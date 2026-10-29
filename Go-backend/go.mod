@@ -1,6 +1,6 @@
 module game-site-backend
 
-go 1.25.11
+go 1.26.0
 
 require (
 	github.com/golang-jwt/jwt/v5 v5.3.1 // indirect
@@ -10,6 +10,7 @@ require (
 	github.com/jackc/pgx/v5 v5.11.0 // indirect
 	github.com/jackc/puddle/v2 v2.2.2 // indirect
 	github.com/lib/pq v1.10.9 // indirect
-	golang.org/x/sync v0.21.0 // indirect
-	golang.org/x/text v0.38.0 // indirect
+	golang.org/x/crypto v0.58.0 // indirect
+	golang.org/x/sync v0.24.0 // indirect
+	golang.org/x/text v0.43.0 // indirect
 )

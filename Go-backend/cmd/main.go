@@ -11,6 +11,9 @@ import (
 	"syscall"
 	"time"
 
+	"game-site-backend/internal/handlers"
+	"game-site-backend/internal/storage"
+
 	"github.com/golang-migrate/migrate/v4"
 	_ "github.com/golang-migrate/migrate/v4/database/postgres"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
@@ -47,7 +50,11 @@ func main() {
 		slog.Info("Migrations applied successfully!")
 	}
 
+	st := storage.New(db)
+	handler := handlers.New(st)
+
 	mux := http.NewServeMux()
+	mux.HandleFunc("POST /api/game/register", handler.Register)
 	mux.HandleFunc("/healthz", func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 		w.Write([]byte("Everything is fine"))
