@@ -5,6 +5,7 @@ import (
 	"log/slog"
 	"net/http"
 
+	"game-site-backend/internal/auth"
 	"game-site-backend/internal/models"
 	"game-site-backend/internal/storage"
 
@@ -20,7 +21,7 @@ func New(s *storage.Storage) *Handler {
 }
 
 func (h *Handler) Register(w http.ResponseWriter, r *http.Request) {
-	if r := r.Method; r != http.MethodPost {
+	if meth := r.Method; meth != http.MethodPost {
 		http.Error(w, "Method is not allowed", http.StatusMethodNotAllowed)
 		return
 	}
@@ -64,6 +65,53 @@ func (h *Handler) Register(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
+
+	if err = json.NewEncoder(w).Encode(resp); err != nil {
+		slog.Error("Failed to encode response", "err", err)
+		return
+	}
+}
+
+func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
+	if meth := r.Method; meth != http.MethodPost {
+		http.Error(w, "Method is not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	var request models.LoginRequest
+
+	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
+		slog.Error("Could not decode login attempt", "err", err)
+		http.Error(w, "Invalid JSON format", http.StatusBadRequest)
+		return
+	}
+
+	user, err := h.Storage.GetUserByUsername(r.Context(), request.Username)
+	if err != nil {
+		slog.Error("Invalid username or password", "err", err)
+		http.Error(w, "Unauthorized", http.StatusUnauthorized)
+		return
+	}
+
+	if err = bcrypt.CompareHashAndPassword([]byte(user.PasswordHash), []byte(request.Password)); err != nil {
+		slog.Error("Invalid password", "err", err)
+		http.Error(w, "Unauthorized", http.StatusUnauthorized)
+		return
+	}
+
+	token, err := auth.GenerateToken(user.ID, user.Username)
+	if err != nil {
+		slog.Error("Failed to generate JWT token", "err", err)
+		http.Error(w, "Internal server error", http.StatusInternalServerError)
+	}
+
+	resp := models.LoginResponse{
+		Status: "ok",
+		Token:  token,
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
 
 	if err = json.NewEncoder(w).Encode(resp); err != nil {
 		slog.Error("Failed to encode response", "err", err)

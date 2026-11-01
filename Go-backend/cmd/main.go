@@ -54,7 +54,8 @@ func main() {
 	handler := handlers.New(st)
 
 	mux := http.NewServeMux()
-	mux.HandleFunc("POST /api/game/register", handler.Register)
+	mux.HandleFunc("POST /api/register", handler.Register)
+	mux.HandleFunc("POST /api/login", handler.Login)
 	mux.HandleFunc("/healthz", func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 		w.Write([]byte("Everything is fine"))
