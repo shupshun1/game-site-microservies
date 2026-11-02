@@ -57,9 +57,17 @@ func (h *Handler) Register(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	token, err := auth.GenerateToken(user.ID, user.Username)
+	if err != nil {
+		slog.Error("Failed to generate JWT token", "err", err)
+		http.Error(w, "Internal server error", http.StatusInternalServerError)
+		return
+	}
+
 	resp := models.RegisterResponse{
 		Status:  "ok",
 		UserId:  user.ID,
+		Token:   token,
 		Message: "User created successfully",
 	}
 
@@ -103,6 +111,7 @@ func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		slog.Error("Failed to generate JWT token", "err", err)
 		http.Error(w, "Internal server error", http.StatusInternalServerError)
+		return
 	}
 
 	resp := models.LoginResponse{

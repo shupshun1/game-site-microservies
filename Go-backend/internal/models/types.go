@@ -80,6 +80,7 @@ type RegisterRequest struct {
 type RegisterResponse struct {
 	Status  string `json:"status"`
 	UserId  int    `json:"user_id"`
+	Token   string `json:"token"`
 	Message string `json:"message"`
 }
 
