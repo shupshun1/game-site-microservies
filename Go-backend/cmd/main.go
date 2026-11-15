@@ -11,6 +11,7 @@ import (
 	"syscall"
 	"time"
 
+	"game-site-backend/internal/auth"
 	"game-site-backend/internal/handlers"
 	"game-site-backend/internal/storage"
 
@@ -56,6 +57,8 @@ func main() {
 	mux := http.NewServeMux()
 	mux.HandleFunc("POST /api/register", handler.Register)
 	mux.HandleFunc("POST /api/login", handler.Login)
+	mux.HandleFunc("POST /api/shop", auth.AuthMiddleware(handler.BuySkin))
+	mux.HandleFunc("POST /api/profile", auth.AuthMiddleware(handler.GetProfile))
 	mux.HandleFunc("/healthz", func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 		w.Write([]byte("Everything is fine"))

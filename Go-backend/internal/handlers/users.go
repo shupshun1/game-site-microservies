@@ -31,6 +31,7 @@ func (h *Handler) Register(w http.ResponseWriter, r *http.Request) {
 	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
 		slog.Error("Could not decode register attempt", "err", err)
 		http.Error(w, "Invalid JSON format", http.StatusBadRequest)
+		return
 	}
 
 	if len(request.Username) < 2 {
@@ -126,4 +127,55 @@ func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
 		slog.Error("Failed to encode response", "err", err)
 		return
 	}
+}
+
+func (h *Handler) BuySkin(w http.ResponseWriter, r *http.Request) {
+	userId := r.Context().Value("user_id").(int)
+
+	var req models.BuySkinRequest
+	err := json.NewDecoder(r.Body).Decode(&req)
+	if err != nil {
+		slog.Error("Could not decode purchase attempt", "err", err)
+		http.Error(w, "Invalid JSON format", http.StatusBadRequest)
+		return
+	}
+
+	err = h.Storage.BuySkin(r.Context(), userId, req.SkinId)
+	if err != nil {
+		slog.Error("Could not purchase a skin", "err", err)
+		http.Error(w, "Internal server error", http.StatusInternalServerError)
+		return
+	}
+
+	resp := models.BuySkinResponse{
+		Status: "ok",
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+
+	if err := json.NewEncoder(w).Encode(resp); err != nil {
+		slog.Error("Failed to encode response", "err", err)
+		return
+	}
+}
+
+func (h *Handler) GetProfile(w http.ResponseWriter, r *http.Request) {
+	userId := r.Context().Value("user_id").(int)
+
+	data, err := h.Storage.GetUserWithStats(r.Context(), userId)
+	if err != nil {
+		slog.Error("Could not get data", "err", err)
+		http.Error(w, "Internal server error", http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+
+	if err := json.NewEncoder(w).Encode(data); err != nil {
+		slog.Error("Failed to encode response", "err", err)
+		return
+	}
+
 }

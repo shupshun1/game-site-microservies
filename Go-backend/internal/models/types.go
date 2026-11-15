@@ -99,6 +99,5 @@ type BuySkinRequest struct {
 }
 
 type BuySkinResponse struct {
-	Status  string `json:"status"`
-	Balance int    `json:"balance"`
+	Status string `json:"status"`
 }

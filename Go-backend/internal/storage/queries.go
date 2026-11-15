@@ -210,7 +210,7 @@ func (s *Storage) BuySkin(ctx context.Context, userID, skinID int) error {
 	err = tx.QueryRowContext(ctx,
 		`SELECT st.balance, sk.owned_skins FROM
 		users_stats st JOIN users_skins sk ON st.user_id = sk.user_id
-		WHERE user_id = $1
+		WHERE st.user_id = $1
 		FOR UPDATE`, userID).Scan(&balance, &ownedSkins)
 	if err != nil {
 		slog.Error("Could not find a user")
