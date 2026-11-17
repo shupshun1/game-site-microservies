@@ -179,3 +179,55 @@ func (h *Handler) GetProfile(w http.ResponseWriter, r *http.Request) {
 	}
 
 }
+
+func (h *Handler) UpdateStats(w http.ResponseWriter, r *http.Request) {
+	userID := r.Context().Value("user_id").(int)
+
+	var req models.UpdateStatsRequest
+
+	err := json.NewDecoder(r.Body).Decode(&req)
+	if err != nil {
+		slog.Error("Could not decode json", "err", err)
+		http.Error(w, "Bad request", http.StatusBadRequest)
+		return
+	}
+
+	err = h.Storage.UpdateStats(r.Context(), userID, req)
+	if err != nil {
+		slog.Error("Could not update stats", "err", err)
+		http.Error(w, "Internal server error", http.StatusInternalServerError)
+		return
+	}
+
+	data, err := h.Storage.GetUserWithStats(r.Context(), userID)
+	if err != nil {
+		slog.Error("Could not get updated stats", "err", err)
+		http.Error(w, "Internal server error", http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+
+	if err := json.NewEncoder(w).Encode(data); err != nil {
+		slog.Error("Failed to encode response", "err", err)
+		return
+	}
+}
+
+func (h *Handler) GetLeaderboard(w http.ResponseWriter, r *http.Request) {
+	leaderboard, err := h.Storage.GetLeaderboardByBalance(r.Context())
+	if err != nil {
+		slog.Error("Could not get a leaderboard", "err", err)
+		http.Error(w, "Internal server error", http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+
+	if err := json.NewEncoder(w).Encode(leaderboard); err != nil {
+		slog.Error("Failed to encode response", "err", err)
+		return
+	}
+}
