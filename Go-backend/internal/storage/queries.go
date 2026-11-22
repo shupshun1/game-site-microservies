@@ -252,3 +252,88 @@ func (s *Storage) BuySkin(ctx context.Context, userID, skinID int) error {
 
 	return nil
 }
+
+func (s *Storage) SetActiveSkin(ctx context.Context, userID int, skinName string) error {
+	var owned int
+	var active string
+	err := s.db.QueryRowContext(ctx, `
+	SELECT owned_skins, active_skin FROM users_skins
+	WHERE user_id = $1
+	`, userID).Scan(&owned, &active)
+
+	if err != nil {
+		slog.Error("Could not get owned_skins", "err", err)
+		return err
+	}
+
+	if owned < 2 {
+		return fmt.Errorf("Skin is not purchased")
+	}
+
+	if active == skinName {
+		return fmt.Errorf("Skin is already set")
+	}
+
+	_, err = s.db.ExecContext(ctx, `
+	UPDATE users_skins SET active_skin = $1
+	WHERE user_id = $2
+	`, skinName, userID)
+
+	if err != nil {
+		slog.Error("Could not update active skin", "err", err)
+		return err
+	}
+
+	return nil
+}
+
+func (s *Storage) UpdateUserProfile(ctx context.Context, userID int, username, photoUrl string) error {
+	res, err := s.db.ExecContext(ctx, `
+	UPDATE users SET username = $1, photo_url = $2
+	WHERE id = $3
+	`, username, photoUrl, userID)
+
+	if err != nil {
+		slog.Error("Could not update user info", "err", err)
+		return err
+	}
+
+	count, err := res.RowsAffected()
+	if err != nil {
+		slog.Error("Could not update user info", "err", err)
+		return err
+	}
+
+	if count == 0 {
+		err := fmt.Errorf("user with id %d not found", userID)
+		slog.Warn("Info not updated: user not found", "user_id", userID)
+		return err
+	}
+
+	return nil
+}
+
+func (s *Storage) UpdateUserPassword(ctx context.Context, userID int, passwordHash string) error {
+	res, err := s.db.ExecContext(ctx, `
+	UPDATE users SET password_hash = $1
+	WHERE id = $2
+	`, passwordHash, userID)
+
+	if err != nil {
+		slog.Error("Could not update password", "err", err)
+		return err
+	}
+
+	count, err := res.RowsAffected()
+	if err != nil {
+		slog.Error("Could not update password", "err", err)
+		return err
+	}
+
+	if count == 0 {
+		slog.Warn("Password not updated: user not found", "user_id", userID)
+		return fmt.Errorf("user with id %d not found", userID)
+	}
+
+	return nil
+}
