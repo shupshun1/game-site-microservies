@@ -101,3 +101,28 @@ type BuySkinRequest struct {
 type BuySkinResponse struct {
 	Status string `json:"status"`
 }
+
+type SetActiveSkinRequest struct {
+	SkinName string `json:"skin_name"`
+}
+
+type SetActiveSkinResponse struct {
+	Status string `json:"status"`
+}
+
+type UpdateProfileRequest struct {
+	Username string `json:"username"`
+	PhotoUrl string `json:"photo_url"`
+}
+
+type UpdateProfileResponse struct {
+	Status string `json:"status"`
+}
+
+type ChangePasswordRequest struct {
+	NewPassword string `json:"new_password"`
+}
+
+type ChangePasswordResponse struct {
+	Status string `json:"status"`
+}

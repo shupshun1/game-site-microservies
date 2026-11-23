@@ -231,3 +231,111 @@ func (h *Handler) GetLeaderboard(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 }
+
+func (h *Handler) SetActiveSkin(w http.ResponseWriter, r *http.Request) {
+	userID := r.Context().Value("user_id").(int)
+
+	var req models.SetActiveSkinRequest
+
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		slog.Error("Could not decode json", "err", err)
+		http.Error(w, "Bad request", http.StatusBadRequest)
+		return
+	}
+
+	err := h.Storage.SetActiveSkin(r.Context(), userID, req.SkinName)
+	if err != nil {
+		slog.Error("Could not set active skin", "err", err)
+		http.Error(w, "Internal server error", http.StatusInternalServerError)
+		return
+	}
+
+	resp := models.SetActiveSkinResponse{
+		Status: "ok",
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+
+	if err := json.NewEncoder(w).Encode(resp); err != nil {
+		slog.Error("Failed to encode response", "err", err)
+		return
+	}
+}
+
+func (h *Handler) UpdateUserProfile(w http.ResponseWriter, r *http.Request) {
+	userID := r.Context().Value("user_id").(int)
+
+	var req models.UpdateProfileRequest
+
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		slog.Error("Could not decode json", "err", err)
+		http.Error(w, "Bad request", http.StatusBadRequest)
+		return
+	}
+
+	if len(req.Username) < 2 {
+		http.Error(w, "username must be at least 2 characters", http.StatusBadRequest)
+		return
+	}
+
+	if err := h.Storage.UpdateUserProfile(r.Context(), userID, req.Username, req.PhotoUrl); err != nil {
+		slog.Error("Could not update profile data", "err", err)
+		http.Error(w, "Internal server error", http.StatusInternalServerError)
+		return
+	}
+
+	resp := models.UpdateProfileResponse{
+		Status: "ok",
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+
+	if err := json.NewEncoder(w).Encode(resp); err != nil {
+		slog.Error("Failed to encode response", "err", err)
+		return
+	}
+}
+
+func (h *Handler) ChangePassword(w http.ResponseWriter, r *http.Request) {
+	userID := r.Context().Value("user_id").(int)
+
+	var req models.ChangePasswordRequest
+
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		slog.Error("Could not decode login attempt", "err", err)
+		http.Error(w, "Invalid JSON format", http.StatusBadRequest)
+		return
+	}
+
+	if len(req.NewPassword) < 6 {
+		http.Error(w, "Password must be at least 6 characters", http.StatusBadRequest)
+		return
+	}
+
+	NewHashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.NewPassword), bcrypt.DefaultCost)
+	if err != nil {
+		slog.Error("Failed to hash password", "err", err)
+		http.Error(w, "Internal server error", http.StatusInternalServerError)
+		return
+	}
+
+	if err := h.Storage.UpdateUserPassword(r.Context(), userID, string(NewHashedPassword)); err != nil {
+		slog.Error("Could not update password", "err", err)
+		http.Error(w, "Internal server error", http.StatusInternalServerError)
+		return
+	}
+
+	resp := models.ChangePasswordResponse{
+		Status: "ok",
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+
+	if err := json.NewEncoder(w).Encode(resp); err != nil {
+		slog.Error("Failed to encode response", "err", err)
+		return
+	}
+}

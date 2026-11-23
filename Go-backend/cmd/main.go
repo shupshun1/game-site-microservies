@@ -61,6 +61,9 @@ func main() {
 	mux.HandleFunc("GET /api/profile", auth.AuthMiddleware(handler.GetProfile))
 	mux.HandleFunc("POST /update/stats", auth.AuthMiddleware(handler.UpdateStats))
 	mux.HandleFunc("GET /leaderboard", handler.GetLeaderboard)
+	mux.HandleFunc("POST /set/active/skin", auth.AuthMiddleware(handler.SetActiveSkin))
+	mux.HandleFunc("POST /update/profile/data", auth.AuthMiddleware(handler.UpdateUserProfile))
+	mux.HandleFunc("POST /update/password", auth.AuthMiddleware(handler.ChangePassword))
 	mux.HandleFunc("/healthz", func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 		w.Write([]byte("Everything is fine"))
